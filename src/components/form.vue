@@ -6,9 +6,9 @@ import 'element-plus/es/components/radio-group/style/css'
 import 'element-plus/es/components/date-picker/style/css'
 import 'element-plus/es/components/option/style/css'
 import 'element-plus/es/components/select/style/css'
-import { ElInput, ElInputNumber, ElRadio, ElRadioGroup, ElDatePicker, ElOption, ElSelect } from 'element-plus';
-import { ref, defineProps, reactive } from 'vue'
-import type { FormRules } from 'element-plus'
+import { ElInput, ElInputNumber, ElRadio, ElRadioGroup, ElDatePicker, ElOption, ElSelect, FormRules } from 'element-plus';
+import { defineProps, reactive } from 'vue'
+// import type { FormRules } from 'element-plus'
 
 
 
@@ -24,21 +24,18 @@ interface DType {
     required: boolean;
 }
 interface NumberOrStringDictionary {
-    [index: string]: Array<any>
+    [index: string]: any
 }
 const fieldVal = (rule: any, value: any, callback: any) => {
-    if(rule.type == "String" && rule.field === ""){
+    if(rule.type == "string" && value === ""){
         callback(new Error('输点东西进去'))
     }else{
         callback()
     }
     console.log(rule, value, callback());
-    
+
 
 }
-const rules = reactive<FormRules<DType>>({
-    fieldName: [{required: true, validator: fieldVal, trigger: 'blur'}],
-})
 let test1: Array<object> = [
     {
         "fieldName": "subSystemCode",
@@ -316,7 +313,7 @@ function formatData(target: Array<any>): object {
             }
             key[index] = item
         })
-        e["表单" + num] = key
+        e["form" + num] = key
         key = []
     });
     return e
@@ -346,8 +343,22 @@ function typeSelect(type: string, child: boolean) {
     }
     return el
 }
-const form = ref<any>(formatData([test1, test2]))
+const form = reactive<any>(formatData([test1, test2]));
 console.log(form);
+
+const rules = reactive<FormRules<any>>({})
+for (let i = 0; i < Object.keys(form).length; i++) {
+    console.log(i);
+    form[Object.keys(form)[i]].forEach((_item: any, index: number) => {
+        rules[`${Object.keys(form)[i]}[${index}].fieldName`] = [{ required: true, validator: fieldVal, trigger: 'blur' }]
+    })
+
+}
+console.log(rules);
+console.log(form.form1);
+
+
+
 
 </script>
 
@@ -369,14 +380,15 @@ console.log(form);
             </el-icon>
         </button>
         <el-collapse class="collapse" :style="{ 'width': props.width + 'px' }">
-            <el-form class="demo-form-inline" :model="form" label-width="100px" label-position="left" :inline="true" :rules="rules">
+            <el-form class="demo-form-inline" :model="form" label-width="100px" label-position="left" :inline="true"  :rules ="rules" >
                 <el-scrollbar :height="height - 60">
                     <el-collapse-item :title="index" :name="index" v-for="(item, index) in form" :key="item">
                         <div class="collapse-item">
-                            <el-form-item :label="element.desc" v-for="element, num in item" class="demo" :key="element.desc" prop="fieldName">
-                                <component :is="typeSelect(element.type, false)" v-model="form[index][num].fieldName">
+                            <el-form-item :label="element.desc" v-for="element, num in item" class="demo" :key="element.desc" :prop="`${index}[${num}].fieldName`" >
+                                <component :is="typeSelect(element.type, false)" v-model="element.fieldName">
                                     <template v-if="Array.isArray(element.example)">
-                                        <component v-for="child in element.example" :is="typeSelect(form[index][num].type, true)"
+                                        <component v-for="child in element.example"
+                                            :is="typeSelect(form[index][num].type, true)"
                                             :label="element.type == 'List' ? child.num : child.label"
                                             :value="element.type == 'List' ? child.level : false">
                                         </component>
