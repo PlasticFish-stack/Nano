@@ -7,8 +7,15 @@ import 'element-plus/es/components/date-picker/style/css'
 import 'element-plus/es/components/option/style/css'
 import 'element-plus/es/components/select/style/css'
 import { ElInput, ElInputNumber, ElRadio, ElRadioGroup, ElDatePicker, ElOption, ElSelect } from 'element-plus';
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, reactive } from 'vue'
+import type { FormRules } from 'element-plus'
+
+
+
+
 const props = defineProps(['height', 'width'])
+let itemWidth: string = '180px'
+
 interface DType {
     fieldName: string | number;
     type: string;
@@ -19,8 +26,19 @@ interface DType {
 interface NumberOrStringDictionary {
     [index: string]: Array<any>
 }
-console.log(props);
+const fieldVal = (rule: any, value: any, callback: any) => {
+    if(rule.type == "String" && rule.field === ""){
+        callback(new Error('输点东西进去'))
+    }else{
+        callback()
+    }
+    console.log(rule, value, callback());
+    
 
+}
+const rules = reactive<FormRules<DType>>({
+    fieldName: [{required: true, validator: fieldVal, trigger: 'blur'}],
+})
 let test1: Array<object> = [
     {
         "fieldName": "subSystemCode",
@@ -329,31 +347,36 @@ function typeSelect(type: string, child: boolean) {
     return el
 }
 const form = ref<any>(formatData([test1, test2]))
-function add(data: typeof form) {
-    console.log(data);
-}
+console.log(form);
+
 </script>
 
 <template>
-    <div id="code" :style="{ 'height': props.height + 'px', 'width': props.width + 'px'}">
+    <div id="code" :style="{ 'height': props.height + 'px', 'width': props.width + 'px' }">
         <button class="icon" style="right: 10px; background-color: #F56C6C;">
-            <el-icon size="15" ><CloseBold /></el-icon>
+            <el-icon size="15">
+                <CloseBold />
+            </el-icon>
         </button>
         <button class="icon" style="right: 45px; background-color: #409EFF;">
-            <el-icon size="15"><Notification /></el-icon>
+            <el-icon size="15">
+                <Notification />
+            </el-icon>
         </button>
         <button class="icon" style="right: 80px; background-color: #67C23A;">
-            <el-icon size="15"><Check /></el-icon>
+            <el-icon size="15">
+                <Check />
+            </el-icon>
         </button>
-        <el-collapse class="collapse">
-            <el-form class="demo-form-inline" :model="form" label-width="180px" label-position="left" :inline="true">
+        <el-collapse class="collapse" :style="{ 'width': props.width + 'px' }">
+            <el-form class="demo-form-inline" :model="form" label-width="100px" label-position="left" :inline="true" :rules="rules">
                 <el-scrollbar :height="height - 60">
                     <el-collapse-item :title="index" :name="index" v-for="(item, index) in form" :key="item">
                         <div class="collapse-item">
-                            <el-form-item :label="element.desc" v-for="element in item" class="demo" :key="element.desc">
-                                <component :is="typeSelect(element.type, false)" v-model="element.fieldName">
+                            <el-form-item :label="element.desc" v-for="element, num in item" class="demo" :key="element.desc" prop="fieldName">
+                                <component :is="typeSelect(element.type, false)" v-model="form[index][num].fieldName">
                                     <template v-if="Array.isArray(element.example)">
-                                        <component v-for="child in element.example" :is="typeSelect(element.type, true)"
+                                        <component v-for="child in element.example" :is="typeSelect(form[index][num].type, true)"
                                             :label="element.type == 'List' ? child.num : child.label"
                                             :value="element.type == 'List' ? child.level : false">
                                         </component>
@@ -367,8 +390,8 @@ function add(data: typeof form) {
                 </el-scrollbar>
 
                 <el-form-item class="submit">
-                    <el-button type="danger" @click="add(form)">清除</el-button>
-                    <el-button type="success" @click="add(form)">提交</el-button>
+                    <el-button type="danger">清除</el-button>
+                    <!-- <el-button type="success" @click="submitForm(form)">提交</el-button> -->
                 </el-form-item>
             </el-form>
         </el-collapse>
@@ -376,6 +399,34 @@ function add(data: typeof form) {
 </template>
 
 <style lang="scss" scoped>
+.demo-form-inline {
+    :deep(.el-input) {
+        --el-input-width: v-bind(itemWidth);
+    }
+
+    :deep(.el-input-number) {
+        width: v-bind(itemWidth)
+    }
+
+    :deep(.el-date-editor) {
+        --el-date-editor-width: v-bind(itemWidth)
+    }
+
+    :deep(.el-radio-group) {
+        width: v-bind(itemWidth)
+    }
+
+    :deep(.el-form-item__label) {
+        align-items: center;
+    }
+
+    .demo {
+        height: 100px;
+        align-items: center;
+
+    }
+
+}
 
 #code {
     overflow: hidden;
@@ -383,13 +434,14 @@ function add(data: typeof form) {
     background-color: #fff;
     overflow-y: hidden;
     padding-top: 50px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 2%;
+    padding-right: 2%;
     box-shadow: var(--el-box-shadow-dark);
     border: 1px solid var(--el-border-color);
     border-radius: 18px;
 }
-.icon{
+
+.icon {
     position: absolute;
     height: 25px;
     width: 25px;
@@ -404,13 +456,20 @@ function add(data: typeof form) {
     cursor: pointer;
 }
 
-.collapse-item{
+.collapse {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.collapse-item {
     height: 100%;
     width: 100%;
     margin-top: 20px;
     border-radius: 0;
 }
-.submit{
+
+.submit {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -418,12 +477,5 @@ function add(data: typeof form) {
     left: 50%;
     transform: translateX(-50%);
     position: absolute;
-}
-.demo-form-inline .el-input {
-    --el-input-width: 250px;
-}
-
-.demo {
-    width: 400px;
 }
 </style>

@@ -7,7 +7,7 @@ import forms from '@/components/form.vue';
 
 <template>
   <div>
-    <forms :height="800" :width="1200"></forms>
+    <forms :height="500" :width="700"></forms>
   </div>
 </template>
 
