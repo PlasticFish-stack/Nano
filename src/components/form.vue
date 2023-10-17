@@ -7,7 +7,7 @@ import 'element-plus/es/components/date-picker/style/css'
 import 'element-plus/es/components/option/style/css'
 import 'element-plus/es/components/select/style/css'
 import { ElInput, ElInputNumber, ElRadio, ElRadioGroup, ElDatePicker, ElOption, ElSelect } from 'element-plus';
-import { ref, defineProps, reactive } from 'vue'
+import { defineProps, reactive } from 'vue'
 import type { FormRules } from 'element-plus'
 
 
@@ -27,18 +27,19 @@ interface NumberOrStringDictionary {
     [index: string]: Array<any>
 }
 const fieldVal = (rule: any, value: any, callback: any) => {
-    if (rule.type == "String" && rule.field === "") {
-        callback(new Error('输点东西进去'))
-    } else {
-        callback()
+    if (rule.required) {
+        if (rule.type == "string" && value === "") {
+            callback(new Error('输点东西进去'))
+        } else {
+            callback()
+        }
     }
+
     console.log(rule, value, callback());
 
 
 }
-const rules = reactive<FormRules<DType>>({
-    fieldName: [{ required: true, validator: fieldVal, trigger: 'blur' }],
-})
+
 let test1: Array<object> = [
     {
         "fieldName": "subSystemCode",
@@ -346,7 +347,14 @@ function typeSelect(type: string, child: boolean) {
     }
     return el
 }
-const form = ref<any>(formatData([test1, test2]))
+const form = reactive<any>(formatData([test1, test2]))
+const rules = reactive<FormRules<any>>({})
+for (let i = 0; i < Object.keys(form).length; i++) {
+    form[Object.keys(form)[i]].forEach((item: any, index: number) => {
+        rules[`${Object.keys(form)[i]}[${index}].fieldName`] = [{ required: item.required, validator: fieldVal, trigger: 'blur' }]
+    })
+
+}
 console.log(form);
 
 </script>
@@ -378,8 +386,8 @@ console.log(form);
                     <el-collapse-item :title="index" :name="index" v-for="(item, index) in form" :key="item">
                         <div class="collapse-item">
                             <el-form-item :label="element.desc" v-for="element, num in item" class="demo"
-                                :key="element.desc" prop="fi eldName">
-                                <component :is="typeSelect(element.type, false)" v-model="form[index][num].fieldName">
+                                :key="element.desc" :prop="`${index}[${num}].fieldName`">
+                                <component :is="typeSelect(element.type, false)" v-model="element.fieldName">
                                     <template v-if="Array.isArray(element.example)">
                                         <component v-for="child in element.example"
                                             :is="typeSelect(form[index][num].type, true)"
@@ -396,7 +404,7 @@ console.log(form);
                 </el-scrollbar>
 
                 <el-form-item class="submit">
-                    <el-button type="danger">清除</el-button>
+                    <el-button type="primary">提交</el-button>
                     <!-- <el-button type="success" @click="submitForm(form)">提交</el-button> -->
                 </el-form-item>
             </el-form>
@@ -427,7 +435,7 @@ console.log(form);
     }
 
     .demo {
-        height: 100px;
+        height: 70px;
         align-items: center;
 
     }
@@ -442,23 +450,24 @@ console.log(form);
     padding-top: 50px;
     padding-left: 2%;
     padding-right: 2%;
-    box-shadow: var(--el-box-shadow-dark);
+    box-shadow: var(--el-box-shadow-light);
     border: 1px solid var(--el-border-color);
-    border-radius: 8px;
+    border-radius: 4px;
 }
 
 #header {
     content: "";
     height: 50px;
     width: 100%;
-    background-color: #409EFF;
+    background-color: white;
     position: absolute;
     z-index: 1;
     top: 0;
     left: 0;
     display: flex;
     align-items: center;
-    flex-direction: row-reverse;box-shadow: var(--el-box-shadow-lighter);
+    flex-direction: row-reverse;
+    box-shadow: var(--el-box-shadow-lighter);
 }
 
 .icon {
@@ -473,7 +482,6 @@ console.log(form);
     color: white;
     cursor: pointer;
     border: 1px solid var(--el-border-color);
-    box-shadow: var(--el-box-shadow-dark);
 }
 
 .collapse {
