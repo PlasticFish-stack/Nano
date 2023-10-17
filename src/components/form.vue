@@ -6,9 +6,9 @@ import 'element-plus/es/components/radio-group/style/css'
 import 'element-plus/es/components/date-picker/style/css'
 import 'element-plus/es/components/option/style/css'
 import 'element-plus/es/components/select/style/css'
-import { ElInput, ElInputNumber, ElRadio, ElRadioGroup, ElDatePicker, ElOption, ElSelect, FormRules } from 'element-plus';
-import { defineProps, reactive } from 'vue'
-// import type { FormRules } from 'element-plus'
+import { ElInput, ElInputNumber, ElRadio, ElRadioGroup, ElDatePicker, ElOption, ElSelect } from 'element-plus';
+import { ref, defineProps, reactive } from 'vue'
+import type { FormRules } from 'element-plus'
 
 
 
@@ -24,18 +24,21 @@ interface DType {
     required: boolean;
 }
 interface NumberOrStringDictionary {
-    [index: string]: any
+    [index: string]: Array<any>
 }
 const fieldVal = (rule: any, value: any, callback: any) => {
-    if(rule.type == "string" && value === ""){
+    if (rule.type == "String" && rule.field === "") {
         callback(new Error('输点东西进去'))
-    }else{
+    } else {
         callback()
     }
     console.log(rule, value, callback());
 
 
 }
+const rules = reactive<FormRules<DType>>({
+    fieldName: [{ required: true, validator: fieldVal, trigger: 'blur' }],
+})
 let test1: Array<object> = [
     {
         "fieldName": "subSystemCode",
@@ -313,7 +316,7 @@ function formatData(target: Array<any>): object {
             }
             key[index] = item
         })
-        e["form" + num] = key
+        e["表单" + num] = key
         key = []
     });
     return e
@@ -343,49 +346,40 @@ function typeSelect(type: string, child: boolean) {
     }
     return el
 }
-const form = reactive<any>(formatData([test1, test2]));
+const form = ref<any>(formatData([test1, test2]))
 console.log(form);
-
-const rules = reactive<FormRules<any>>({})
-for (let i = 0; i < Object.keys(form).length; i++) {
-    console.log(i);
-    form[Object.keys(form)[i]].forEach((_item: any, index: number) => {
-        rules[`${Object.keys(form)[i]}[${index}].fieldName`] = [{ required: true, validator: fieldVal, trigger: 'blur' }]
-    })
-
-}
-console.log(rules);
-console.log(form.form1);
-
-
-
 
 </script>
 
 <template>
     <div id="code" :style="{ 'height': props.height + 'px', 'width': props.width + 'px' }">
-        <button class="icon" style="right: 10px; background-color: #F56C6C;">
-            <el-icon size="15">
-                <CloseBold />
-            </el-icon>
-        </button>
-        <button class="icon" style="right: 45px; background-color: #409EFF;">
-            <el-icon size="15">
-                <Notification />
-            </el-icon>
-        </button>
-        <button class="icon" style="right: 80px; background-color: #67C23A;">
-            <el-icon size="15">
-                <Check />
-            </el-icon>
-        </button>
+        <div id="header">
+            <button class="icon" style=" background-color: #F56C6C;">
+                <el-icon size="15">
+                    <CloseBold />
+                </el-icon>
+            </button>
+            <button class="icon" style="background-color: #409EFF;">
+                <el-icon size="15">
+                    <Notification />
+                </el-icon>
+            </button>
+            <button class="icon" style="background-color: #67C23A;">
+                <el-icon size="15">
+                    <Check />
+                </el-icon>
+            </button>
+        </div>
+
         <el-collapse class="collapse" :style="{ 'width': props.width + 'px' }">
-            <el-form class="demo-form-inline" :model="form" label-width="100px" label-position="left" :inline="true"  :rules ="rules" >
+            <el-form class="demo-form-inline" :model="form" label-width="100px" label-position="left" :inline="true"
+                :rules="rules">
                 <el-scrollbar :height="height - 60">
                     <el-collapse-item :title="index" :name="index" v-for="(item, index) in form" :key="item">
                         <div class="collapse-item">
-                            <el-form-item :label="element.desc" v-for="element, num in item" class="demo" :key="element.desc" :prop="`${index}[${num}].fieldName`" >
-                                <component :is="typeSelect(element.type, false)" v-model="element.fieldName">
+                            <el-form-item :label="element.desc" v-for="element, num in item" class="demo"
+                                :key="element.desc" prop="fi eldName">
+                                <component :is="typeSelect(element.type, false)" v-model="form[index][num].fieldName">
                                     <template v-if="Array.isArray(element.example)">
                                         <component v-for="child in element.example"
                                             :is="typeSelect(form[index][num].type, true)"
@@ -444,28 +438,42 @@ console.log(form.form1);
     overflow: hidden;
     position: relative;
     background-color: #fff;
-    overflow-y: hidden;
+    overflow: hidden;
     padding-top: 50px;
     padding-left: 2%;
     padding-right: 2%;
     box-shadow: var(--el-box-shadow-dark);
     border: 1px solid var(--el-border-color);
-    border-radius: 18px;
+    border-radius: 8px;
+}
+
+#header {
+    content: "";
+    height: 50px;
+    width: 100%;
+    background-color: #409EFF;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;box-shadow: var(--el-box-shadow-lighter);
 }
 
 .icon {
-    position: absolute;
+    margin-right: 10px;
     height: 25px;
     width: 25px;
     border-radius: 90%;
     border: none;
-    top: 0;
-    margin-top: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
     cursor: pointer;
+    border: 1px solid var(--el-border-color);
+    box-shadow: var(--el-box-shadow-dark);
 }
 
 .collapse {
