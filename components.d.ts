@@ -7,23 +7,12 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    ElBreadcrub: typeof import('element-plus/es')['ElBreadcrub']
-    ElBreadcrubItem: typeof import('element-plus/es')['ElBreadcrubItem']
     ElBreadcrumb: typeof import('element-plus/es')['ElBreadcrumb']
     ElBreadcrumbItem: typeof import('element-plus/es')['ElBreadcrumbItem']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCol: typeof import('element-plus/es')['ElCol']
-    ElCollapse: typeof import('element-plus/es')['ElCollapse']
-    ElCollapseItem: typeof import('element-plus/es')['ElCollapseItem']
     ElDescriptions: typeof import('element-plus/es')['ElDescriptions']
     ElDescriptionsItem: typeof import('element-plus/es')['ElDescriptionsItem']
-    ElForm: typeof import('element-plus/es')['ElForm']
-    ElFormItem: typeof import('element-plus/es')['ElFormItem']
-    ElIcon: typeof import('element-plus/es')['ElIcon']
     ElImage: typeof import('element-plus/es')['ElImage']
-    ElRow: typeof import('element-plus/es')['ElRow']
-    ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
-    ElTag: typeof import('element-plus/es')['ElTag']
     Form: typeof import('./src/components/form.vue')['default']
     Info: typeof import('./src/components/info.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -130,7 +130,7 @@ let detail = ref<detailType>(
 )
 console.log(detail);
 let form = {
-  address: { name: '地址', value: '吉林省 长春市 朝阳区' },
+  address: { name: '地址', value: '吉林省 长春市 朝阳区12321321' },
   mode: { name: '模式', value: '直销' },
   status: { name: '客户状态', value: '潜在客户' },
   source: { name: '客户来源', value: '上门拜访' },
@@ -186,7 +186,7 @@ let form = {
               label-class-name="my-label"
               class-name="my-content"
               align="left"
-              width="2000px"
+              width="400px"
               >{{ item.value }}</el-descriptions-item>
             </el-descriptions>
 
@@ -206,9 +206,13 @@ let form = {
 </template>
 
 <style lang='scss' scoped>
+:deep(.my-label) {
+  display: inline-block;
+  width: 100px;
+}
 :deep(.my-content) {
-  float: right;
-  margin-right: 30px;
+  display: inline-block;
+  margin-right: 10px;
 }
 #info {
   height: var(--info-height);
