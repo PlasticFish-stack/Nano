@@ -129,8 +129,8 @@ let detail = ref<detailType>(
   }
 )
 console.log(detail);
-let form = {
-  address: { name: '地址', value: '吉林省 长春市 朝阳区12321321' },
+let form = ref({
+  address: { name: '地址', value: '吉林省 长春市 朝阳区' },
   mode: { name: '模式', value: '直销' },
   status: { name: '客户状态', value: '潜在客户' },
   source: { name: '客户来源', value: '上门拜访' },
@@ -146,9 +146,13 @@ let form = {
   coordinator: { name: '协办人', value: '' },
   department: { name: '负责人部门', value: '公共图书馆事业部' },
   tag: { name: '标签', value: '' }
+})
+let bool = ref<boolean>(true);
+function change(t: boolean) {
+  bool.value = t
+  console.log(bool);
+
 }
-
-
 
 
 
@@ -157,44 +161,116 @@ let form = {
 
 <template>
   <div id="info">
+
     <div class="header">
       <div class="header_info">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/' }">客户详情</el-breadcrumb-item>
           <el-breadcrumb-item><a href="/">{{ detail.name }}</a></el-breadcrumb-item>
         </el-breadcrumb>
-        <el-button type="primary">编辑</el-button>
+        <el-button color="#61649f" @click="change(false)" v-show="bool">编辑</el-button>
+        <div v-show="!bool">
+          <el-button color="#61649f" @click="change(true)">保存</el-button>
+          <el-button @click="change(true)" native-type="reset" bg text>取消</el-button>
+        </div>
+
       </div>
     </div>
     <div class="process">
       <div class="process_info">
-        <el-button type="primary">编辑</el-button>
-        <el-button type="primary">编辑</el-button>
+        <el-button color="#61649f">审核客户</el-button>
+        <el-tag size="large" type="info" style="color: #61649f;">有效</el-tag>
       </div>
     </div>
     <div class="block">
       <div class="block_info">
         <div class="block_title">
-          <el-image style="width: 80px; height: 80px; margin-right: 15px;" fit="fit" />
+          <el-image style="width: 80px; height: 80px; margin-right: 15px; object-fit: fill;" />
           {{ detail.name }}
         </div>
-        <div class="block_form">
+        <el-form :model="form" label-width="100px" :inline="true" label-position="left" style="margin-top: 20px;">
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">地址</div>
+              <div>{{ form["address"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">销售模式</div>
+              <div>{{ form["mode"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">客户状态</div>
+              <div>{{ form["status"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">客户来源</div>
+              <div>{{ form["source"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">客户等级</div>
+              <div>{{ form["level"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">客户类别</div>
+              <div>{{ form["category"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">首次成单日期</div>
+              <div>{{ form["initialPeriod"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">目前使用系统</div>
+              <div>{{ form["currentSystem"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">曾用名</div>
+              <div>{{ form["formerName"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">历史负责人</div>
+              <div>{{ form["historicalLeaders"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">联系人类型</div>
+              <div>{{ form["contactTypes"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">公司</div>
+              <div>{{ form["company"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">负责人</div>
+              <div>{{ form["head"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">协办人</div>
+              <div>{{ form["coordinator"].value }}</div>
+            </el-col>
+          </el-row>
+          <el-row :gutter="20">
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">负责人部门</div>
+              <div>{{ form["department"].value }}</div>
+            </el-col>
+            <el-col :span="12" class="form_item">
+              <div class="form_item_label">标签</div>
+              <div>{{ form["company"].value }}</div>
+            </el-col>
+          </el-row>
+        </el-form>
 
-          <div class="desciptions" v-show="true">
-            <el-descriptions column="2">
-              <el-descriptions-item :label="item.name" v-for="item in form" 
-              label-class-name="my-label"
-              class-name="my-content"
-              align="left"
-              width="400px"
-              >{{ item.value }}</el-descriptions-item>
-            </el-descriptions>
-
-          </div>
-          <div class="form" v-show="false">
-            2
-          </div>
-        </div>
         <div class="block_tabs">
 
         </div>
@@ -202,18 +278,11 @@ let form = {
 
 
     </div>
+
   </div>
 </template>
 
 <style lang='scss' scoped>
-:deep(.my-label) {
-  display: inline-block;
-  width: 100px;
-}
-:deep(.my-content) {
-  display: inline-block;
-  margin-right: 10px;
-}
 #info {
   height: var(--info-height);
   width: 800px;
@@ -285,25 +354,27 @@ let form = {
     display: flex;
     justify-content: flex-start;
     font-size: 30px;
-    color: red;
+    color: #1D1D1D;
   }
 
-  .block_form {
-    position: relative;
-    background-color: black;
+
+
+
+
+  .form_item {
     display: flex;
-    justify-content: center;
-
-    .desciptions {
-      position: absolute;
-
-    }
-
-    .form {
-      position: absolute;
-    }
+    color: #616163;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 400;
   }
 
+  .form_item_label {
+    width: 105px;
+    display: flex;
+    justify-content: left;
+    font-weight: 600;
+  }
 
   // .block_tabs {
   //   width: 100%;
