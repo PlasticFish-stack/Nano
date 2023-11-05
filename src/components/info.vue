@@ -1,13 +1,15 @@
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { reactive, ref } from 'vue';
+import { regionData } from 'element-china-area-data'
+import tabs from '@/components/tab.vue'
 
 interface detailType {
   id: number;
   company_ids: Array<any>;
   name: string;
-  province: object;
-  city: object;
-  district: object;
+  province: any;
+  city: any;
+  district: any;
   address: any;
   sales_mode: any;
   status: string;
@@ -48,7 +50,7 @@ let detail = ref<detailType>(
         "name": "xxxxxxxxx"
       }
     ],
-    "name": "xx电信公司",
+    "name": "长春市党委校",
     "province": {
       "id": 8927,
       "name": "河南省"
@@ -128,7 +130,6 @@ let detail = ref<detailType>(
     "label": []
   }
 )
-console.log(detail);
 let form = ref({
   address: { name: '地址', value: '吉林省 长春市 朝阳区' },
   mode: { name: '模式', value: '直销' },
@@ -151,12 +152,24 @@ let bool = ref<boolean>(true);
 function change(t: boolean) {
   bool.value = t
   console.log(bool);
-
 }
 
 
-
-
+let options: Array<any> = [
+  {
+    value: '直销',
+    label: '直销'
+  }
+]
+let data: Array<object> = reactive([
+  {
+    id: '', name: '广州图创计算机软件开发有限公司'
+  },
+  { id: '', name: '广州万升信息科技有限公司' },
+])
+function update(index: number) {
+  data.splice(index, 1);
+}
 </script>
 
 <template>
@@ -188,91 +201,119 @@ function change(t: boolean) {
           <el-image style="width: 80px; height: 80px; margin-right: 15px; object-fit: fill;" />
           {{ detail.name }}
         </div>
-        <el-form :model="form" label-width="100px" :inline="true" label-position="left" style="margin-top: 20px;">
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">地址</div>
-              <div>{{ form["address"].value }}</div>
+        <el-form :model="detail" label-width="100px" label-position="left" style="margin-top: 20px; color: black;">
+          <el-row :gutter="140">
+            <el-col :span="12">
+              <el-form-item label="地址">
+                <div v-if="bool">{{ detail["province"].name }} {{ detail["city"].name }} {{ detail["district"].name }}</div>
+                <div v-if="!bool">
+                  <el-row>
+                    <el-cascader size="default" :options="regionData"></el-cascader>
+                  </el-row>
+                  <el-row style="margin-top: 5px;">
+                    <el-input :rows="2" type="textarea" placeholder="补充地址:街道名称 门牌号" />
+                  </el-row>
+                </div>
+              </el-form-item>
+              <el-form-item label="销售模式">
+                <div v-if="bool">{{ detail["sales_mode"] }}</div>
+                <div v-if="!bool">
+                  <el-cascader size="default" :options="options"></el-cascader>
+                </div>
+              </el-form-item>
+              <el-form-item label="客户状态">
+                <div v-if="bool">{{ detail["status"] }}</div>
+                <div v-if="!bool">
+                  <el-cascader size="default" :options="options"></el-cascader>
+                </div>
+              </el-form-item>
+              <el-form-item label="客户来源">
+                <div v-if="bool">{{ detail["source"]["name"] }}</div>
+                <div v-if="!bool">
+                  <el-cascader size="default" :options="options"></el-cascader>
+                </div>
+              </el-form-item>
+              <el-form-item label="客户等级">
+                <div v-if="bool">{{ detail["partner_level"]["name"] }}</div>
+                <div v-if="!bool">
+                  <el-cascader size="default" :options="options"></el-cascader>
+                </div>
+              </el-form-item>
+              <el-form-item label="客户类别">
+                <div v-if="bool">{{ detail["category"]["name"] }}</div>
+                <div v-if="!bool">
+                  <el-input></el-input>
+                </div>
+              </el-form-item>
+              <el-form-item label="首次成单日期">
+                <div>{{ form["initialPeriod"].value }}</div>
+              </el-form-item>
+              <el-form-item label="目前使用系统">
+                <div v-if="bool">{{ form["currentSystem"].value }}</div>
+                <div v-if="!bool">
+                  <el-input></el-input>
+                </div>
+              </el-form-item>
             </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">销售模式</div>
-              <div>{{ form["mode"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">客户状态</div>
-              <div>{{ form["status"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">客户来源</div>
-              <div>{{ form["source"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">客户等级</div>
-              <div>{{ form["level"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">客户类别</div>
-              <div>{{ form["category"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">首次成单日期</div>
-              <div>{{ form["initialPeriod"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">目前使用系统</div>
-              <div>{{ form["currentSystem"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">曾用名</div>
-              <div>{{ form["formerName"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">历史负责人</div>
-              <div>{{ form["historicalLeaders"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">联系人类型</div>
-              <div>{{ form["contactTypes"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">公司</div>
-              <div>{{ form["company"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">负责人</div>
-              <div>{{ form["head"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">协办人</div>
-              <div>{{ form["coordinator"].value }}</div>
-            </el-col>
-          </el-row>
-          <el-row :gutter="20">
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">负责人部门</div>
-              <div>{{ form["department"].value }}</div>
-            </el-col>
-            <el-col :span="12" class="form_item">
-              <div class="form_item_label">标签</div>
-              <div>{{ form["company"].value }}</div>
+
+
+
+            <el-col :span="12">
+              <el-form-item label="曾用名">
+                <div v-if="bool">{{ form["formerName"].value }}</div>
+              </el-form-item>
+              <el-form-item label="历史负责人"></el-form-item>
+              <el-form-item label="联系人类型">{{ detail.partner_type }}</el-form-item>
+              <el-form-item label="公司">
+                <tabs v-if="bool" v-model:data="data" :edit="false" />
+                <tabs v-if="!bool" :data="data" @update="update" :edit="true" />
+              </el-form-item>
+              <el-form-item label="负责人">
+                <div v-if="bool">{{ form["head"].value }}</div>
+                <div v-if="!bool">
+                  <el-input></el-input>
+                </div>
+              </el-form-item>
+              <el-form-item label=协办人>
+                <div v-if="bool">{{ form["coordinator"].value }}</div>
+                <div v-if="!bool">
+                  <el-input></el-input>
+                </div>
+              </el-form-item>
+              <el-form-item label="负责人部门">
+                <div v-if="bool">{{ detail["department"]["name"] }}</div>
+                <div v-if="!bool">
+                  <el-input></el-input>
+                </div>
+              </el-form-item>
+              <el-form-item label="标签">
+                <div v-if="bool">{{ form["company"].value }}</div>
+                <div v-if="!bool">
+                  <el-cascader size="default" :options="options">
+                  </el-cascader>
+                </div>
+              </el-form-item>
             </el-col>
           </el-row>
         </el-form>
 
         <div class="block_tabs">
-
+          <el-tabs type="border-card">
+            <el-tab-pane label="联系人">
+              <el-table style="width: 100%" stripe fit>
+                <el-table-column prop="date" label="#"  />
+                <el-table-column prop="name" label="名称"/>
+                <el-table-column prop="address" label="电话"  />
+                <el-table-column prop="address" label="手机"/>
+                <el-table-column prop="address" label="微信" />
+                <el-table-column prop="address" label="负责人部门"  />
+                <el-table-column prop="address" label="负责人"  />
+              </el-table>
+            </el-tab-pane>
+            <el-tab-pane label="内部备注">内部备注</el-tab-pane>
+            <el-tab-pane label="开票信息">开票信息</el-tab-pane>
+            <el-tab-pane label="关联订单">关联订单</el-tab-pane>
+          </el-tabs>
         </div>
       </div>
 
@@ -283,9 +324,16 @@ function change(t: boolean) {
 </template>
 
 <style lang='scss' scoped>
+:deep(.el-form-item__content){
+  display: block;
+}
+:deep(.el-form-item) {
+  margin-bottom: 4px;
+}
+
 #info {
   height: var(--info-height);
-  width: 800px;
+  width: 1000px;
   border: 1px solid var(--el-border-color);
 }
 
@@ -356,23 +404,27 @@ function change(t: boolean) {
     font-size: 30px;
     color: #1D1D1D;
   }
-
-
+  .block_tabs{
+    margin-top: 30px;
+  }
 
 
 
   .form_item {
     display: flex;
     color: #616163;
-    margin-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     font-size: 14px;
     font-weight: 400;
+    align-items: center;
   }
 
   .form_item_label {
     width: 105px;
     display: flex;
     justify-content: left;
+    align-items: center;
     font-weight: 600;
   }
 
@@ -380,5 +432,11 @@ function change(t: boolean) {
   //   width: 100%;
   //   background-color: blue;
   // }
+}
+
+.block_row {
+  height: auto;
+  width: 400px;
+  background-color: black;
 }
 </style>
