@@ -3,6 +3,7 @@ import { reactive, ref } from 'vue';
 import { regionData } from 'element-china-area-data'
 import tabs from '@/components/tab.vue'
 
+
 interface detailType {
   id: number;
   company_ids: Array<any>;
@@ -95,7 +96,26 @@ let detail = ref<detailType>(
     "agent": [],
     "child_ids": [
       {
-        "id": 115084,
+        "id": 1,
+        "name": "xxx经理",
+        "sales_mode": null,
+        "phone": "111",
+        "mobile": "111",
+        "weixin": "",
+        "source": null,
+        "partner_level": null,
+        "category": null,
+        "department": {
+          "id": 111,
+          "name": "销售部"
+        },
+        "charge": {
+          "id": 71,
+          "name": "客户名称"
+        }
+      },
+      {
+        "id": 2,
         "name": "xxx经理",
         "sales_mode": null,
         "phone": "111",
@@ -130,6 +150,7 @@ let detail = ref<detailType>(
     "label": []
   }
 )
+
 let form = ref({
   address: { name: '地址', value: '吉林省 长春市 朝阳区' },
   mode: { name: '模式', value: '直销' },
@@ -170,6 +191,23 @@ let data: Array<object> = reactive([
 function update(index: number) {
   data.splice(index, 1);
 }
+let rowCenter = {
+  textAlign: "center",
+}
+let rowHeadCenter = {
+  textAlign: "center"
+}
+let childFormBool = ref<any>(false)
+let childForm = ref<any>(null)
+let clickCell = (a, b, c) => {
+  console.log('12');
+  childFormBool.value = true
+  console.log(childFormBool);
+
+  childForm.value = a
+  console.log(childForm);
+
+}
 </script>
 
 <template>
@@ -192,7 +230,7 @@ function update(index: number) {
     <div class="process">
       <div class="process_info">
         <el-button color="#61649f">审核客户</el-button>
-        <el-tag size="large" type="info" style="color: #61649f;">有效</el-tag>
+        <el-tag size="large" type="info" style="color: #61649f;">{{ detail["check_status"] }}</el-tag>
       </div>
     </div>
     <div class="block">
@@ -205,7 +243,8 @@ function update(index: number) {
           <el-row :gutter="140">
             <el-col :span="12">
               <el-form-item label="地址">
-                <div v-if="bool">{{ detail["province"].name }} {{ detail["city"].name }} {{ detail["district"].name }}</div>
+                <div v-if="bool">{{ detail["province"].name }} {{ detail["city"].name }} {{ detail["district"].name }}
+                </div>
                 <div v-if="!bool">
                   <el-row>
                     <el-cascader size="default" :options="regionData"></el-cascader>
@@ -255,9 +294,6 @@ function update(index: number) {
                 </div>
               </el-form-item>
             </el-col>
-
-
-
             <el-col :span="12">
               <el-form-item label="曾用名">
                 <div v-if="bool">{{ form["formerName"].value }}</div>
@@ -300,20 +336,103 @@ function update(index: number) {
         <div class="block_tabs">
           <el-tabs type="border-card">
             <el-tab-pane label="联系人">
-              <el-table style="width: 100%" stripe fit>
-                <el-table-column prop="date" label="#"  />
-                <el-table-column prop="name" label="名称"/>
-                <el-table-column prop="address" label="电话"  />
-                <el-table-column prop="address" label="手机"/>
-                <el-table-column prop="address" label="微信" />
-                <el-table-column prop="address" label="负责人部门"  />
-                <el-table-column prop="address" label="负责人"  />
+              <el-table style="width: 100%" @row-click="clickCell" :header-cell-style="rowHeadCenter"
+                :cell-style="rowCenter" stripe :data="detail.child_ids" table-layout="auto">
+                <el-table-column prop="id" label="#" />
+                <el-table-column prop="name" label="名称" />
+                <el-table-column prop="phone" label="电话" />
+                <el-table-column prop="mobile" label="手机" />
+                <el-table-column prop="weixin" label="微信" />
+                <el-table-column prop="department.name" label="负责人部门" />
+                <el-table-column prop="charge.name" label="负责人" />
               </el-table>
             </el-tab-pane>
             <el-tab-pane label="内部备注">内部备注</el-tab-pane>
             <el-tab-pane label="开票信息">开票信息</el-tab-pane>
             <el-tab-pane label="关联订单">关联订单</el-tab-pane>
           </el-tabs>
+        </div>
+        <div v-if="childFormBool" class="shadow">
+          <div class="childForm">
+            <div class="childHeader">
+              <span>联系人</span>
+              <el-button>Default</el-button>
+            </div>
+            <div style="width: 95%; margin: 0 auto;">
+              <el-form :model="childForm" label-width="100px" label-position="left"
+                style="margin-top: 20px; color: black;">
+                <el-row :gutter="150">
+                  <el-col :span="12">
+                    <el-form-item label="性别">
+                      <div v-if="true">{{ childForm.id }}</div>
+                      <div v-if="true">
+                        <el-radio-group>
+                          <el-radio label="男"></el-radio>
+                          <el-radio label="女"></el-radio>
+                        </el-radio-group>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="电话">
+                      <div v-if="true">{{ childForm.phone }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="手机">
+                      <div v-if="true">{{ childForm.mobile }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="电子邮箱">
+                      <div v-if="true">{{ childForm.email }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                  </el-col>
+                  <el-col :span="12">
+                    <el-form-item label="职位">
+                      <div v-if="true">{{ childForm.partner_level }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="微信">
+                      <div v-if="true">{{ childForm.weixin }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="联系人部门">
+                      <div v-if="true">{{ childForm.department.name }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="联系人类型">
+                    </el-form-item>
+                    <el-form-item label="公司">
+                      <div v-if="true">{{ childForm.category }}</div>
+                      <div v-if="true">
+                        <el-input></el-input>
+                      </div>
+                    </el-form-item>
+                    <el-form-item label="协办人"></el-form-item>
+                  </el-col>
+                </el-row>
+                <el-tabs type="card" style="margin-top: 40px;">
+                  <el-tab-pane label="内部备注" >
+                    <el-table style="width: 100%" :header-cell-style="rowHeadCenter" :cell-style="rowCenter"
+                      table-layout="auto">
+
+                    </el-table>
+                  </el-tab-pane>
+
+                </el-tabs>
+              </el-form>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -324,14 +443,53 @@ function update(index: number) {
 </template>
 
 <style lang='scss' scoped>
-:deep(.el-form-item__content){
+.childHeader {
+  height: 65px;
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  box-shadow: var(--el-box-shadow-lighter);
+  color: black;
+}
+
+.shadow {
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  left: 0;
+  top: 0;
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* 半透明黑色 */
+}
+
+.childForm {
+  height: 600px;
+  width: 900px;
+  background-color: white;
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+}
+
+.rowCenter {
+  text-align: center;
+}
+
+:deep(.el-form-item__content) {
   display: block;
 }
+
 :deep(.el-form-item) {
   margin-bottom: 4px;
 }
 
 #info {
+  margin: 0 auto;
   height: var(--info-height);
   width: 1000px;
   border: 1px solid var(--el-border-color);
@@ -404,7 +562,8 @@ function update(index: number) {
     font-size: 30px;
     color: #1D1D1D;
   }
-  .block_tabs{
+
+  .block_tabs {
     margin-top: 30px;
   }
 
