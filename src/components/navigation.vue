@@ -1,42 +1,66 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import gsap from 'gsap';
+import { onMounted, ref, watch } from 'vue'
+import { useStore } from '@/store/list.ts'
+import { storeToRefs } from 'pinia'
+
 const props = defineProps({
   height: { type: String, required: true },
   width: { type: String, required: false },
   dropdown_height: { type: String, required: false }
-})
-let dropdown_boolean = ref<Boolean>(true);
+});
+const store = useStore();
+const { about, contact, creative, news, online, products, project, video } = storeToRefs(store);
+const list:any = {
+  about, contact, creative, news, online, products, project, video
+}
+console.log(store);
 
-console.log(dropdown_boolean.value);
+let dropdown_state = ref<Boolean>(false);
+watch(dropdown_state, (newVal: any, _oldVal: any) => {
+  (function () {
+    gsap.to("#nano_navigation_background", {
+      yPercent: newVal ? 80 : 0,
+      duration: 0.4,
+      ease: "power2.out"
+    })
+  })()
+})
+onMounted(() => {
+
+})
+
 </script>
 
 <template>
-  <TransitionGroup>
-    <div id="nano_navigation" :style="{
-      height: `calc( ${props.height} + ${props.dropdown_height})`,
-      width: props.width
-    }" key="background">
+  <div id="nano_navigation_background" :style="{
+    height: `calc( ${props.height} + ${props.dropdown_height})`,
+    width: props.width
+  }" @mouseenter="dropdown_state = true" @mouseleave="dropdown_state = false">
+  </div>
+
+  <div id="nano_navigation_list">
+    <div v-for="(item, _index) in list">
+      {{ item.value.title }}
     </div>
-    <div id="nano_nav_val" key="value">
-      123
-    </div>
-  </TransitionGroup>
+  </div>
 </template>
 
 <style lang="scss" scoped>
-#nano_navigation {
+#nano_navigation_background {
   background-color: #fffef9;
   color: black;
   position: absolute;
   z-index: 0;
-
   box-shadow: var(--el-box-shadow-dark);
+  transform: translateY(-80%);
 }
-#nano_nav_val {
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-  }
+
+#nano_navigation_list {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
 </style>

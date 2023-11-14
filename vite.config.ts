@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import Icons from 'unplugin-icons/vite'
-import path from 'path'
+import { fileURLToPath, URL } from 'url'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -34,7 +34,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': path.resolve('./src')
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
   css: {
