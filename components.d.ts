@@ -15,6 +15,7 @@ declare module 'vue' {
     ElImage: typeof import('element-plus/es')['ElImage']
     Form: typeof import('./src/components/form.vue')['default']
     Info: typeof import('./src/components/info.vue')['default']
+    Navigation: typeof import('./src/components/navigation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

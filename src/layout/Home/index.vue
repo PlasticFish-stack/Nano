@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { } from 'vue'
-import _forms from '@/components/form.vue';
-import info from '@/components/info.vue';
-
+import navigation from "@/components/navigation.vue"
 </script>
 
 <template>
-  <div>
-    <info></info>
-    <!-- <forms :height="500" :width="700"></forms> -->
-  </div>
+  <navigation 
+    :height = "5 + 'rem'"
+    :dropdown_height = "20 + 'rem'"
+    :width = "100 + '%'"
+    />
 </template>
 
 <style scoped>
