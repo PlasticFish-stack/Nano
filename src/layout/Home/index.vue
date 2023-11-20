@@ -4,8 +4,8 @@ import navigation from "@/components/navigation.vue"
 
 <template>
   <navigation 
-    :height = "5 + 'rem'"
-    :dropdown_height = "20 + 'rem'"
+    :height = "80 + 'px'"
+    :dropdown_height = " 16 + 'rem'"
     :width = "100 + '%'"
     />
 </template>
